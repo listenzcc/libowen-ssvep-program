@@ -1,0 +1,17 @@
+div {
+    border-top: 1px solid
+}
+
+div.controller {
+    background-color: darkgray;
+    min-height: 50px;
+    padding: 5px
+}
+
+div.section {
+    margin: 5px
+}
+
+body {
+    width: 1100px
+}
