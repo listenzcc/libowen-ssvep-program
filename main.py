@@ -18,13 +18,17 @@ Functions:
 
 # %% ---- 2024-06-03 ------------------------
 # Requirements and constants
-from flask import Flask, render_template
+import json
+from flask import Flask, render_template, request
 from pathlib import Path
 
 from util import logger
+from util.session_manager import SessionManager
 
 root = Path(__file__).parent
 web = root.joinpath('web')
+
+sm = SessionManager(root.joinpath('asset/design'))
 
 app = Flask(
     'libowen-ssvep-program',
@@ -40,6 +44,31 @@ app = Flask(
 @app.route("/", methods=["GET", "POST"])
 def root():
     return render_template('index.html')
+
+
+@app.route('/commit', methods=["POST"])
+def commit():
+    name = request.form.get("designName")
+    txt = request.form.get('designText')
+    sm.save(name, txt)
+    dfs = sm.refresh()
+    logger.debug(f'Received new design {name}')
+    return list(dfs.keys())
+
+
+@app.route('/getAll', methods=['GET'])
+def get_all():
+    names = list(sm.refresh().keys())
+    logger.debug(f'Got names: {names}')
+    return names
+
+
+@app.route('/get', methods=['GET'])
+def get_by_name():
+    name = request.args.get('name')
+    print(name)
+    sm.refresh()
+    return dict(content=sm.get_by_name(name))
 
 
 # %% ---- 2024-06-03 ------------------------
