@@ -11,7 +11,7 @@
 
 </head>
 
-<body>
+<body class="fullWidth">
     <!--  -->
     <div>
         <h1>Welcome to my website</h1>
@@ -25,21 +25,21 @@
             <div class="controller">
                 <div>
                     <p>Screen color:
-                        <input class="watchList" optionType="displayOption" type="color" name="screenColor"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="color" name="screenColor"
                             id="inputScreenColor" value="#765765">
                     </p>
                 </div>
                 <div>
                     <p>Ruler color:
-                        <input class="watchList" optionType="displayOption" type="color" name="rulerColor"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="color" name="rulerColor"
                             id="inputRulerColor" value="#999999">
-                        <input class="watchList" optionType="displayOption" type="checkbox" name="rulerToggle"
-                            id="inputRulerToggle" checked="true">
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="checkbox"
+                            name="rulerToggle" id="inputRulerToggle" checked="true">
                     </p>
                 </div>
                 <div>
                     <p>Patch color:
-                        <input class="watchList" optionType="displayOption" type="color" name="patchColor"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="color" name="patchColor"
                             id="inputPatchColor" value="#ffffff">
                     </p>
                 </div>
@@ -77,24 +77,24 @@
                 <div>
                     <p>
                         <span>Monitor size (inch):</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="monitorSize"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number" name="monitorSize"
                             id="inputMonitorSize" value=14 step=1 min=9 max=27>
                     </p>
                     <p>
                         <span>Monitor resolution in x (px):</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="monitorResolutionX"
-                            id="inputMonitorResolutionX" value=1920 step=1 min=800 max=3840>
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number"
+                            name="monitorResolutionX" id="inputMonitorResolutionX" value=1920 step=1 min=800 max=3840>
                     </p>
                     <p>
                         <span>Monitor resolution in y (px):</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="monitorResolutionY"
-                            id="inputMonitorResolutionY" value=1080 step=1 min=600 max=2160>
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number"
+                            name="monitorResolutionY" id="inputMonitorResolutionY" value=1080 step=1 min=600 max=2160>
                     </p>
                 </div>
                 <div>
                     <p>
                         <span>Distance between eyes and monitor center (cm):</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="distance"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number" name="distance"
                             id="inputDistance" value=50 step=1 min=20 max=200>
                     </p>
                 </div>
@@ -110,22 +110,22 @@
                 <div>
                     <p>
                         <span>Rect width:</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="rectWidth"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number" name="rectWidth"
                             id="inputRectWidth" value=0.75 step=0.01 min=0.1 max=1.0>
                     </p>
                     <p>
                         <span>Rect height:</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="rectHeight"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number" name="rectHeight"
                             id="inputRectHeight" value=0.8 step=0.01 min=0.1 max=1.0>
                     </p>
                     <p>
                         <span>Rect center x:</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="rectCenterX"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number" name="rectCenterX"
                             id="inputRectCenterX" value=0.5 step=0.01 min=0.1 max=0.9>
                     </p>
                     <p>
                         <span>Rect center y:</span>
-                        <input class="watchList" optionType="displayOption" type="number" name="rectCenterY"
+                        <input class="SSVEPLayoutWatchList" optionType="displayOption" type="number" name="rectCenterY"
                             id="inputRectCenterY" value=0.5 step=0.01 min=0.1 max=0.9>
                     </p>
                 </div>
@@ -137,42 +137,99 @@
             <h2>My SSVEP layout is...</h2>
             <p class="attention">It will totally remake your design</p>
             <div class="controller">
-
                 <div>
                     <p>
                         <span>Patches grid columns:</span>
-                        <input class="watchList" type="number" name="patchesGridColumns" id="inputPatchesGridColumns"
-                            value=10 step=1 min=1 max=20>
+                        <input class="SSVEPLayoutWatchList" type="number" name="patchesGridColumns"
+                            id="inputPatchesGridColumns" value=10 step=1 min=1 max=20>
                     </p>
                     <p>
                         <span>Patches grid rows:</span>
-                        <input class="watchList" type="number" name="patchesGridRows" id="inputPatchesGridRows" value=10
-                            step=1 min=1 max=20>
+                        <input class="SSVEPLayoutWatchList" type="number" name="patchesGridRows"
+                            id="inputPatchesGridRows" value=10 step=1 min=1 max=20>
                     </p>
                     <p>
                         <span>Patch extent x:</span>
-                        <input class="watchList" type="number" name="patchExtentX" id="inputPatchExtentX" value=0.8
-                            step=0.01 min=0.1 max=1.0>
+                        <input class="SSVEPLayoutWatchList" type="number" name="patchExtentX" id="inputPatchExtentX"
+                            value=0.8 step=0.01 min=0.1 max=1.0>
                     </p>
 
                     <p>
                         <span>Patch extent y:</span>
-                        <input class="watchList" type="number" name="patchExtentY" id="inputPatchExtentY" value=0.8
-                            step=0.01 min=0.1 max=1.0>
+                        <input class="SSVEPLayoutWatchList" type="number" name="patchExtentY" id="inputPatchExtentY"
+                            value=0.8 step=0.01 min=0.1 max=1.0>
                     </p>
                 </div>
             </div>
         </div>
 
+
+    </div>
+
+    <div class="flex">
         <!--  -->
         <div class="section">
             <h2>My temporary design is...</h2>
+            <div class="controller">
+
+                <form action="commitTemporal" target="timeSeriesIframe" method="post">
+                    <p>
+                        <span>Trial body length (seconds):</span>
+                        <input class="SSVEPTemporalWatchList" type="number" name="trialBodyLength"
+                            id="inputTrialBodyLength" value=2 min=0.1 max=10.0 step=0.1>
+                    </p>
+
+                    <p>
+                        <span>Trial head length (seconds):</span>
+                        <input class="SSVEPTemporalWatchList" type="number" name="trialHeadLength"
+                            id="inputTrialHeadLength" value=1 min=0.1 max=10.0 step=0.1>
+                    </p>
+
+                    <p>
+                        <span>Trial tail length (seconds):</span>
+                        <input class="SSVEPTemporalWatchList" type="number" name="trialTailLength"
+                            id="inputTrialTailLength" value=1 min=0.1 max=10.0 step=0.1>
+                    </p>
+
+                    <textarea name="designText" style="display:none" id="clonedTextareaDesignText" cols="40"
+                        rows="20"></textarea>
+                    <input type="submit" value="Submit">
+
+                </form>
+            </div>
+
+            <!--  -->
+            <div class="section">
+                <h2>So, let it go</h2>
+                <div class="controller">
+                    <div>
+                        <p>
+                            <span>Trial repeats (times)</span>
+                            <input type="number" name="trialRepeats" id="inputTrialRepeats" value=5 min=1 max=100
+                                step=1>
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            <span>Cue</span>
+                            <select name="cue" id="selectCue"></select>
+                        </p>
+                    </div>
+                    <div>
+                        <input id="inputGoButton" type="button" value="Go">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div>
+            <h2>Time series</h2>
+            <iframe class="width3quarters" height="600px" name="timeSeriesIframe"></iframe>
         </div>
     </div>
 
-
     <script src="static/js/commons.js"></script>
-    <script src="static/js/handle-inputs.js"></script>
+    <script src="static/js/handle-layout-inputs.js"></script>
     <script src="static/js/session-manager.js"></script>
 
 </body>

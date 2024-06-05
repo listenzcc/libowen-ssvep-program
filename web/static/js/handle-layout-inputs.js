@@ -1,12 +1,13 @@
-let inputWatchList,
-    options,
+let inputSSVEPLayoutWatchList,
+    layoutOptions,
     designTextDom = document.getElementById('textareaDesignText'),
+    clonedDesignTextDom = document.getElementById('clonedTextareaDesignText'),
     canvas = document.getElementById('canvasSSVEPLayout'),
     ctx = canvas.getContext('2d');
 
-inputWatchList = [...document.getElementsByClassName('watchList')].map((element) => element.getAttribute('id'))
+inputSSVEPLayoutWatchList = [...document.getElementsByClassName('SSVEPLayoutWatchList')].map((element) => element.getAttribute('id'))
 
-console.log('The inputWatchList is:', inputWatchList)
+console.log('The inputWatchList is:', inputSSVEPLayoutWatchList)
 
 /**
  * 1 inches = 2.54 cm
@@ -30,16 +31,16 @@ function computePixelsByRadius(pixelsPerCentimeter, degrees, distance) {
 }
 
 function fetchLatestOptions() {
-    options = {}
+    layoutOptions = {}
     // Make the options as a dict
-    inputWatchList.forEach(id => {
+    inputSSVEPLayoutWatchList.forEach(id => {
         let dom = document.getElementById(id)
         switch (dom.type) {
             case 'checkbox':
-                options[id] = dom.checked
+                layoutOptions[id] = dom.checked
                 break;
             default:
-                options[id] = dom.value
+                layoutOptions[id] = dom.value
                 break;
         }
     })
@@ -57,26 +58,26 @@ function generateDesign() {
     fetchLatestOptions()
 
 
-    cx = options.inputMonitorResolutionX * options.inputRectCenterX
-    cy = options.inputMonitorResolutionY * options.inputRectCenterY
-    width = options.inputMonitorResolutionX * options.inputRectWidth
-    height = options.inputMonitorResolutionY * options.inputRectHeight
+    cx = layoutOptions.inputMonitorResolutionX * layoutOptions.inputRectCenterX
+    cy = layoutOptions.inputMonitorResolutionY * layoutOptions.inputRectCenterY
+    width = layoutOptions.inputMonitorResolutionX * layoutOptions.inputRectWidth
+    height = layoutOptions.inputMonitorResolutionY * layoutOptions.inputRectHeight
     offsetX = cx - width / 2
     offsetY = cy - height / 2
 
     {
-        let scaleX = d3.scaleLinear().domain([0, options.inputPatchesGridColumns]).range([0, width]),
-            scaleY = d3.scaleLinear().domain([0, options.inputPatchesGridRows]).range([0, height]),
+        let scaleX = d3.scaleLinear().domain([0, layoutOptions.inputPatchesGridColumns]).range([0, width]),
+            scaleY = d3.scaleLinear().domain([0, layoutOptions.inputPatchesGridRows]).range([0, height]),
             dx = scaleX(1),
             dy = scaleY(1),
             x, y, omega, phi;
 
-        for (let i = 0; i < options.inputPatchesGridColumns; i++) {
-            for (let j = 0; j < options.inputPatchesGridRows; j++) {
+        for (let i = 0; i < layoutOptions.inputPatchesGridColumns; i++) {
+            for (let j = 0; j < layoutOptions.inputPatchesGridRows; j++) {
                 x = parseInt(scaleX(i) + offsetX + dx / 2)
                 y = parseInt(scaleY(j) + offsetY + dy / 2)
-                w = parseInt(dx * options.inputPatchExtentX)
-                h = parseInt(dy * options.inputPatchExtentY)
+                w = parseInt(dx * layoutOptions.inputPatchExtentX)
+                h = parseInt(dy * layoutOptions.inputPatchExtentY)
                 omega = Math.random() * 10 + 10
                 phi = Math.random() * Math.PI * 2
                 patches.push(Object.assign({}, { x, y, w, h, omega: omega.toFixed(2), phi: phi.toFixed(2) }))
@@ -90,6 +91,7 @@ function generateDesign() {
         designTextDom.value = patches.map((d, i) => {
             return [i, d.pid, d.x, d.y, d.w, d.h, d.omega, d.phi].join(',')
         }).join(';\n')
+        clonedDesignTextDom.value = designTextDom.value
     }
 
 }
@@ -100,12 +102,36 @@ function generateDesign() {
  */
 function parseDesign() {
     let raw = designTextDom.value,
+        design,
         split;
 
-    return raw.split(';').map(d => {
+    design = raw.split(';').map(d => {
         split = d.split(',').map(d => d.trim())
         return Object.assign({}, { pid: split[1], x: split[2], y: split[3], w: split[4], h: split[5] })
     })
+
+
+    // Check if something is wrong
+    {
+        // Check if a pid is not unique
+        let unique = [...new Set([...design.map(d => d.pid)])]
+        if (unique.length < design.length) {
+            let msg = unique.map(pid => {
+                let n = design.filter(d => d.pid === pid).length
+                return n > 1 ? `${pid}: ${n}\n` : ''
+            }).filter(d => d)
+            alert('Repeat pid is detected.\n' + msg)
+        }
+    }
+
+    return design
+}
+
+function refreshCue(design) {
+    let cue = d3.select('#selectCue'),
+        optionData = ['!Random', '!NoCue'].concat(design.map(d => d.pid))
+    cue.node().innerHTML = ''
+    cue.selectAll('option').data(optionData).enter().append('option').text(d => d).attr('value', d => d)
 }
 
 
@@ -122,28 +148,28 @@ function redrawCanvas() {
 
     // Re-initialize the canvas and generate ctx
     {
-        aspectRatio = options.inputMonitorResolutionX / options.inputMonitorResolutionY
+        aspectRatio = layoutOptions.inputMonitorResolutionX / layoutOptions.inputMonitorResolutionY
         canvas.width = canvas.height * aspectRatio
 
-        cx = options.inputRectCenterX * canvas.width
-        cy = options.inputRectCenterY * canvas.height
-        width = options.inputRectWidth * canvas.width
-        height = options.inputRectHeight * canvas.height;
+        cx = layoutOptions.inputRectCenterX * canvas.width
+        cy = layoutOptions.inputRectCenterY * canvas.height
+        width = layoutOptions.inputRectWidth * canvas.width
+        height = layoutOptions.inputRectHeight * canvas.height;
 
         ctx = canvas.getContext('2d')
         ctx.imageSmoothingEnabled = true;
 
         // Clear the canvas with background color
         {
-            ctx.fillStyle = options.inputScreenColor
+            ctx.fillStyle = layoutOptions.inputScreenColor
             ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
     }
 
     // Draw overlays
-    if (options.inputRulerToggle) {
-        ctx.fillStyle = options.inputRulerColor
-        ctx.strokeStyle = options.inputRulerColor
+    if (layoutOptions.inputRulerToggle) {
+        ctx.fillStyle = layoutOptions.inputRulerColor
+        ctx.strokeStyle = layoutOptions.inputRulerColor
 
         // Center
         ctx.beginPath()
@@ -157,10 +183,10 @@ function redrawCanvas() {
         let r, k = Math.sqrt(2) / 2;
         ctx.font = "12px Arial";
 
-        pixelsPerCentimeter = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height) / convertInchesToCentimeters(options.inputMonitorSize);
+        pixelsPerCentimeter = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height) / convertInchesToCentimeters(layoutOptions.inputMonitorSize);
 
         [5, 10].map(deg => {
-            r = computePixelsByRadius(pixelsPerCentimeter, deg, options.inputDistance)
+            r = computePixelsByRadius(pixelsPerCentimeter, deg, layoutOptions.inputDistance)
             ctx.beginPath()
             ctx.ellipse(cx, cy, r, r, 0, 0, Math.PI * 2)
             ctx.stroke()
@@ -171,12 +197,15 @@ function redrawCanvas() {
     // Draw SSVEP patches
     {
         let design = parseDesign()
+
+        refreshCue(design)
+
         ctx.save()
 
-        ctx.fillStyle = options.inputPatchColor
-        ctx.strokeStyle = options.inputPatchColor
+        ctx.fillStyle = layoutOptions.inputPatchColor
+        ctx.strokeStyle = layoutOptions.inputPatchColor
 
-        ctx.scale(canvas.width / options.inputMonitorResolutionX, canvas.height / options.inputMonitorResolutionY)
+        ctx.scale(canvas.width / layoutOptions.inputMonitorResolutionX, canvas.height / layoutOptions.inputMonitorResolutionY)
 
         design.map(d => {
             let { pid, x, y, w, h } = d
@@ -193,12 +222,12 @@ function redrawCanvas() {
 
         ctx.restore()
     }
+
 }
 
 // Handle oninput changes for the inputs
-inputWatchList.forEach(id => {
+inputSSVEPLayoutWatchList.forEach(id => {
     let dom = document.getElementById(id)
-    console.log(dom.getAttribute('optionType'))
     switch (dom.getAttribute("optionType")) {
         case 'displayOption':
             dom.oninput = () => {
@@ -218,6 +247,7 @@ inputWatchList.forEach(id => {
 // Handle input on #designText
 designTextDom.oninput = () => {
     redrawCanvas()
+    clonedDesignTextDom.value = designTextDom.value
 }
 
 generateDesign()

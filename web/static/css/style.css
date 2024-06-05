@@ -17,14 +17,23 @@ div.flex {
     justify-content: space-between;
 }
 
-body {
-    width: 1600px
-}
-
 .invisible {
     display: none;
 }
 
 .attention {
     color: red
+}
+
+div.section {
+    min-width: 400px
+}
+
+/* --------------------------- */
+.fullWidth {
+    width: 1400px
+}
+
+.width3quarters {
+    width: 900px
 }
