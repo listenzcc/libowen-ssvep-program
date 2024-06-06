@@ -30,7 +30,7 @@ from util.display import MainWindow, core
 if __name__ == "__main__":
     main_window = MainWindow()
     while True:
-        if main_window.update_frame() > 30:
+        if main_window.ssvep_update_frame() > 30:
             break
 
     main_window.win.close()

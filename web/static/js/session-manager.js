@@ -80,17 +80,22 @@ updateSavedSessions()
 
         fetch('/go', {
             method: "POST",
-            // body: pkg.json()
             body: new URLSearchParams(pkg) // event.target is the form
         }).then((response) => {
             if (!response.ok) {
+                response.json().then((body) => {
+                    let msg = [response.status, response.statusText]
+                    for (let key in body) {
+                        msg.push(`${key}, ${body[key]}`)
+                    }
+                    alert(msg.join('\n\n'))
+                })
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             return response.json(); // or response.text() or whatever the server sends
         }).then((body) => {
             // handle body
             console.log(body)
-            updateSavedSessions()
         }).catch((error) => {
             // handle error
             console.error(error)

@@ -15,6 +15,7 @@ div.section {
 div.flex {
     display: flex;
     justify-content: space-between;
+    place-content: space-evenly;
 }
 
 .invisible {

@@ -63,7 +63,7 @@
                 </p>
                 <p>
                     <input type="text" name="designName" id="inputDesignName">
-                    <input type="submit" value="Submit">
+                    <input type="submit" value="Save Design">
                 </p>
             </form>
         </div>
@@ -193,38 +193,39 @@
 
                     <textarea name="designText" style="display:none" id="clonedTextareaDesignText" cols="40"
                         rows="20"></textarea>
-                    <input type="submit" value="Submit">
+                    <input type="submit" value="Checkout Time Series">
 
                 </form>
             </div>
+        </div>
 
-            <!--  -->
-            <div class="section">
-                <h2>So, let it go</h2>
-                <div class="controller">
-                    <div>
-                        <p>
-                            <span>Trial repeats (times)</span>
-                            <input type="number" name="trialRepeats" id="inputTrialRepeats" value=5 min=1 max=100
-                                step=1>
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            <span>Cue</span>
-                            <select name="cue" id="selectCue"></select>
-                        </p>
-                    </div>
-                    <div>
-                        <input id="inputGoButton" type="button" value="Go">
-                    </div>
+        <!--  -->
+        <div class="section">
+            <h2>So, let it go</h2>
+            <div class="controller">
+                <div>
+                    <p>
+                        <span>Trial repeats (times)</span>
+                        <input type="number" name="trialRepeats" id="inputTrialRepeats" value=5 min=1 max=100 step=1>
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        <span>Cue</span>
+                        <select name="cue" id="selectCue"></select>
+                    </p>
+                </div>
+                <div>
+                    <input id="inputGoButton" type="button" value="Go">
                 </div>
             </div>
-
         </div>
+
+    </div>
+    <div>
         <div>
             <h2>Time series</h2>
-            <iframe class="width3quarters" height="600px" name="timeSeriesIframe"></iframe>
+            <iframe class="fullWidth" height="600px" name="timeSeriesIframe"></iframe>
         </div>
     </div>
 

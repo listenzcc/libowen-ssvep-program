@@ -18,16 +18,20 @@ Functions:
 
 # %% ---- 2024-06-03 ------------------------
 # Requirements and constants
-from flask import Flask, render_template, request
-from pathlib import Path
-from multiprocessing import Process
-
+import pickle
 import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+
+from pathlib import Path
+
+from flask import Flask, Response, render_template, request
 
 from util import logger
+from util.websocket_client import MyWebsocketClient
 from util.session_manager import SessionManager, TimeSeriesManager, txt2df
+
+
+# ----------------------------------------
+# ---- Initialize objects ----
 
 root = Path(__file__).parent
 web = root.joinpath('web')
@@ -41,6 +45,8 @@ app = Flask(
     static_folder=web.joinpath('static'),
     template_folder=web.joinpath('template')
 )
+
+mwc = MyWebsocketClient()
 
 # %% ---- 2024-06-03 ------------------------
 # Function and class
@@ -129,6 +135,7 @@ def _go():
     print(resolution_x, resolution_y)
 
     kwargs = dict(
+        prompt='SSVEP Experiment Prompt',
         resolution_x=int(resolution_x),
         resolution_y=int(resolution_y),
         repeats=int(repeats),
@@ -141,9 +148,19 @@ def _go():
     )
     print(kwargs)
 
-    from util.display import MainWindow
-    window = MainWindow(**kwargs)
-    window.main_loop()
+    try:
+        mwc.send(pickle.dumps(dict(prompt='Hello')))
+        received = mwc.send(pickle.dumps(kwargs))
+        recovered = pickle.loads(received)
+        print(recovered)
+    except Exception as error:
+        import traceback
+        logger.error(f'Failed websocket connection: {error}')
+        return dict(suggestion='Open the display', error=f'{error}', traceback=traceback.format_exc()), 500
+
+    # from util.display import MainWindow
+    # window = MainWindow(**kwargs)
+    # window.main_loop()
 
     return dict(go='go')
 
