@@ -13,8 +13,34 @@
 
 <body class="fullWidth">
     <!--  -->
+    <div class="flex">
+        <div>
+            <h1>Welcome to my website</h1>
+        </div>
+        <div class="flex" id="divUserLogin">
+            <h2>Login</h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="#27ae60" viewBox="0 0 16 16">
+                <path
+                    d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+            </svg>
+        </div>
+    </div>
+
     <div>
-        <h1>Welcome to my website</h1>
+        <form id="formUserLogin" style="display:none" action="setUserProfile" target="userLoginIframe" method="post">
+            <fieldset>
+                <h2 class="fs-title">Personal Details</h2>
+                <h3 class="fs-subtitle">Welcome to our experiment</h3>
+                <input type="text" name="fname" placeholder="First Name" />
+                <input type="text" name="lname" placeholder="Last Name" />
+                <input type="text" name="phone" placeholder="Phone" />
+                <textarea name="address" placeholder="Address"></textarea>
+                <input type="submit" value="SubmitUserProfile">
+                <!-- <input type="button" name="previous" class="previous action-button" value="Previous" />
+                <a href="https://twitter.com/GoktepeAtakan" class="submit action-button" target="_top">Submit</a> -->
+            </fieldset>
+        </form>
+        <iframe class="invisible" name="userLoginIframe"></iframe>
     </div>
 
     <!--  -->
@@ -218,6 +244,13 @@
                 <div>
                     <input id="inputGoButton" type="button" value="Go">
                 </div>
+            </div>
+        </div>
+
+        <!--  -->
+        <div class="section">
+            <h2>Display status is...</h2>
+            <div id="divDisplayStatus">
             </div>
         </div>
 

@@ -65,10 +65,35 @@ class MyWebsocketServer(object):
         for message in websocket:
             logger.debug(f'Received {message[:20]}, {len(message)}')
             recovered = pickle.loads(message)
-            self.osd_prompt_slogan_text = recovered.get(
-                'prompt', 'Empty prompt')
-            self.task_buffer.append(('SSVEP', recovered))
-            websocket.send(message)
+
+            if prompt := recovered.get('prompt'):
+                self.osd_prompt_slogan_text = prompt
+                logger.debug(f'Updated prompt: {prompt}')
+
+            if recovered.get('task_name') == 'SSVEP':
+                self.task_buffer.append(('SSVEP', recovered))
+                logger.debug('Received SSVEP task')
+
+            if recovered.get('task_name') == 'setUserProfile':
+                profile = recovered.get(
+                    'profile', dict(Error='Invalid user profile'))
+                self.osd_user_profile_text = '\n'.join(
+                    [f'{k}\t {v}' for k, v in profile.items()])
+                logger.debug('Received setUserProfile task')
+
+            if recovered.get('task_name') == 'checkoutDisplayStatus':
+                msg = dict(
+                    tasksInBuffer=len(self.task_buffer),
+                    passed=self.passed,
+                    total=self.total_length if hasattr(
+                        self, 'total_length') else 'N.A.',
+                    currentTask=self.current_task.name
+                )
+                pkg = pickle.dumps(msg)
+                websocket.send(pkg)
+                continue
+
+            websocket.send('OK')
 
     def serve_forever(self):
         Thread(target=self._serve_forever, args=(), daemon=True).start()
@@ -79,9 +104,6 @@ class MyWebsocketServer(object):
 
 
 class MainWindow(MyWebsocketServer):
-    # Mode controlling
-    debug = True
-
     # Basic initialization
     resolution_x = 1920
     resolution_y = 1080
@@ -98,6 +120,11 @@ class MainWindow(MyWebsocketServer):
     osd_prompt_slogan_text = 'Welcome to my display text'
     osd_prompt_slogan = visual.TextStim(
         win=win, text=osd_prompt_slogan_text, pos=[0, 0])
+    # Put the OSD user profile on the middle left
+    osd_user_profile_text = 'Empty user profile'
+    osd_user_profile = visual.TextStim(
+        win=win, text=osd_user_profile_text, pos=[-resolution_x/2+20, 0], anchorHoriz='left'
+    )
 
     # Task buffer
     task_buffer = []
@@ -105,32 +132,35 @@ class MainWindow(MyWebsocketServer):
     # Timing machine
     current_task = AvailableCurrentTasks.IDLE
     tic = time.time()
+    passed = -1
     frame_count = 0
 
     def __init__(self):
         super().__init__()
         self.win.winHandle.activate()
-        if self.debug:
-            self.set_as_debug()
+        self.set_as_idle_screen()
         logger.info('Initialized')
 
-    def set_as_debug(self):
+    def set_as_idle_screen(self):
         self.osd_timer_slogan.autoDraw = True
+        self.osd_user_profile.autoDraw = True
+        self.osd_prompt_slogan.autoDraw = True
         self.blinking_pnt.autoDraw = True
-        logger.debug(f'Set as debug mode')
+        logger.debug('Set as debug mode')
 
     def ssvep__stop__(self):
-        self.img_full_screen.autoDraw = False
+        self.img_full_screen.setAutoDraw(False)
+        del self.img_full_screen
+        self.img_full_screen = None
+        del self.total_length
+
+        self.set_as_idle_screen()
+
         self.tic = time.time()
         self.frame_count = 0
         self.osd_prompt_slogan_text = 'SSVEP experiment finished'
 
     def ssvep__init__(self, resolution_x=None, resolution_y=None, repeats=None, cue=None, df_layout=None, df_ts=None, head_length=None, body_length=None, tail_length=None, **kwargs):
-        # print(dir(self.win))
-        # print(dir(self.win.winHandle))
-        # self.win.winHandle.set_size(resolution_x, resolution_y)
-        # self.win.setSize((resolution_x, resolution_y), units='pix')
-
         img = Image.fromarray(np.zeros((resolution_y, resolution_x)))
         draw = ImageDraw.Draw(img)
         self.img = img
@@ -160,6 +190,8 @@ class MainWindow(MyWebsocketServer):
 
         self.ssvep_mk_patches()
 
+        self.osd_user_profile.setAutoDraw(False)
+        self.osd_prompt_slogan.setAutoDraw(False)
         for e in [self.img_full_screen, self.osd_timer_slogan, self.blinking_pnt]:
             e.setAutoDraw(False)
             e.setAutoDraw(True)
@@ -252,7 +284,8 @@ class MainWindow(MyWebsocketServer):
             if self.current_task == AvailableCurrentTasks.IDLE:
                 self._on_frame_flip()
                 self.osd_prompt_slogan.text = self.osd_prompt_slogan_text
-                self.osd_prompt_slogan.draw()
+                # self.osd_prompt_slogan.draw()
+                self.osd_user_profile.text = self.osd_user_profile_text
 
                 if len(self.task_buffer) == 0:
                     self.win.flip()
@@ -260,8 +293,7 @@ class MainWindow(MyWebsocketServer):
 
                 name, stuff = self.task_buffer.pop(0)
 
-                logger.debug(
-                    f'Received task: {name}, stuff: {list(k for k in stuff)}')
+                logger.debug(f'Received task: {name}, stuff: {list(stuff)}')
 
                 if name == 'SSVEP':
                     try:
@@ -279,7 +311,7 @@ class MainWindow(MyWebsocketServer):
                 if passed > self.total_length:
                     self.ssvep__stop__()
                     self.current_task = AvailableCurrentTasks.IDLE
-                    logger.debug(f'SSVEP finished')
+                    logger.debug('SSVEP finished')
                     continue
 
                 self.ssvep_update_frame(passed)
@@ -297,7 +329,7 @@ class MainWindow(MyWebsocketServer):
     def safe_stop(self):
         self.win.close()
         core.quit()
-        logger.debug(f'Stopped psychopy window')
+        logger.debug('Stopped psychopy window')
 
     def _on_frame_flip(self):
         self._update_pnt_color()
@@ -305,6 +337,7 @@ class MainWindow(MyWebsocketServer):
 
     def _update_timer(self):
         passed = time.time() - self.tic
+        self.passed = passed
         self.frame_count += 1
 
         minutes = int(passed // 60)

@@ -135,6 +135,7 @@ def _go():
     print(resolution_x, resolution_y)
 
     kwargs = dict(
+        task_name='SSVEP',
         prompt='SSVEP Experiment Prompt',
         resolution_x=int(resolution_x),
         resolution_y=int(resolution_y),
@@ -150,19 +151,45 @@ def _go():
 
     try:
         mwc.send(pickle.dumps(dict(prompt='Hello')))
-        received = mwc.send(pickle.dumps(kwargs))
-        recovered = pickle.loads(received)
-        print(recovered)
+        mwc.send(pickle.dumps(kwargs))
     except Exception as error:
         import traceback
         logger.error(f'Failed websocket connection: {error}')
         return dict(suggestion='Open the display', error=f'{error}', traceback=traceback.format_exc()), 500
 
-    # from util.display import MainWindow
-    # window = MainWindow(**kwargs)
-    # window.main_loop()
-
     return dict(go='go')
+
+
+@app.route('/setUserProfile', methods=['POST'])
+def userLogin():
+    pkg = dict(request.form.items())
+
+    try:
+        mwc.send(pickle.dumps(dict(
+            task_name='setUserProfile',
+            profile=pkg
+        )))
+    except Exception as error:
+        import traceback
+        logger.error(f'Failed websocket connection: {error}')
+        return dict(suggestion='Open the display', error=f'{error}', traceback=traceback.format_exc()), 500
+
+    return dict(msg='UserLogin')
+
+
+@app.route('/checkoutDisplayStatus', methods=['GET'])
+def checkout_display_status():
+    try:
+        got = mwc.send(pickle.dumps(dict(
+            task_name='checkoutDisplayStatus',
+        )))
+        msg = pickle.loads(got)
+        print(msg)
+        return msg
+    except Exception as error:
+        import traceback
+        logger.error(f'Failed websocket connection: {error}')
+        return dict(suggestion='Open the display', error=f'{error}', traceback=traceback.format_exc()), 500
 
 
 # %% ---- 2024-06-03 ------------------------

@@ -1,15 +1,15 @@
 div {
-    border-top: 1px solid
+    border-top: 1px solid;
 }
 
 div.controller {
     background-color: darkgray;
     min-height: 50px;
-    padding: 5px
+    padding: 5px;
 }
 
 div.section {
-    margin: 5px
+    margin: 5px;
 }
 
 div.flex {
@@ -23,18 +23,80 @@ div.flex {
 }
 
 .attention {
-    color: red
+    color: red;
 }
 
 div.section {
-    min-width: 400px
+    min-width: 400px;
 }
 
 /* --------------------------- */
 .fullWidth {
-    width: 1400px
+    width: 1400px;
 }
 
 .width3quarters {
-    width: 900px
+    width: 900px;
+}
+
+/* --------------------------- */
+/*form styles*/
+#formUserLogin {
+    width: 400px;
+    margin: 50px auto;
+    text-align: center;
+    position: relative;
+}
+
+#formUserLogin fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 3px;
+    box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+    padding: 20px 30px;
+    box-sizing: border-box;
+    width: 80%;
+    margin: 0 10%;
+
+    /*stacking fieldsets above each other*/
+    position: relative;
+}
+
+/*Hide all except first fieldset*/
+#formUserLogin fieldset:not(:first-of-type) {
+    display: none;
+}
+
+/*inputs*/
+#formUserLogin input,
+#formUserLogin textarea {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2c3e50;
+    font-size: 13px;
+}
+
+/*buttons*/
+#formUserLogin .action-button {
+    width: 100px;
+    background: #27ae60;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 1px;
+    cursor: pointer;
+    padding: 10px;
+    margin: 10px 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+#formUserLogin .action-button:hover,
+#formUserLogin .action-button:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #27ae60;
 }
