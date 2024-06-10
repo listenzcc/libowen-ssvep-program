@@ -20,7 +20,18 @@ function checkoutDisplayStatus() {
         // console.log(raw)
         let rows = []
         for (const key in raw) {
-            rows.push(`${key}: ${raw[key]}`)
+
+            if (key !== 'eventBuffer') {
+                rows.push(`${key}: ${raw[key]}`)
+            }
+            else if (raw[key] !== '') {
+                let ta = document.createElement('textarea')
+                Object.assign(ta.style, { 'width': '400px', 'height': '400px' })
+                ta.value = raw[key]
+                document.getElementById('divExperimentEvents').appendChild(ta)
+            }
+
+
         }
         statusDiv.innerHTML = ''
         d3.select(statusDiv).selectAll('p').data(rows).enter().append('p').text(d => d)

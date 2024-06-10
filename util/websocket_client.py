@@ -30,7 +30,7 @@ class MyWebsocketClient(object):
     url = 'ws://localhost:23335'
 
     def send(self, pkg):
-        with connect(self.url, max_size=3000000) as websocket:
+        with connect(self.url, max_size=300000000) as websocket:
             websocket.send(pkg)
             logger.debug(f'Sent {pkg[:20]}, {len(pkg)}')
             received = websocket.recv()

@@ -74,6 +74,8 @@ updateSavedSessions()
             trialTailLength: document.getElementById("inputTrialTailLength").value,
             trialRepeats: document.getElementById("inputTrialRepeats").value,
             cue: document.getElementById('selectCue').value,
+            backgroundImageDataUrl: getBackgroundImageDataUrl(),
+            patchShape: layoutOptions.selectPatchShape
         });
 
         console.log(pkg)

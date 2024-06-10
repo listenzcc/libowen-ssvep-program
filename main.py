@@ -125,6 +125,8 @@ def _go():
     repeats = request.form.get("trialRepeats")
     resolution_x = request.form.get("resolutionX")
     resolution_y = request.form.get("resolutionY")
+    background_image_data_url = request.form.get('backgroundImageDataUrl')
+    patch_shape = request.form.get('patchShape')
 
     df_ts, _ = tsm.merge_with_txt(txt, body_length)
     df_layout = txt2df(txt)
@@ -146,6 +148,8 @@ def _go():
         head_length=int(head_length),
         body_length=int(body_length),
         tail_length=int(tail_length),
+        background_image_data_url=background_image_data_url,
+        patch_shape=patch_shape,
     )
     print(kwargs)
 

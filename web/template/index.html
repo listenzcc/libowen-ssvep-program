@@ -56,6 +56,13 @@
                     </p>
                 </div>
                 <div>
+                    <p>Custom background:
+                        <input type="file" id="inputBackgroundImage" accept="image/*"
+                            onchange="handleBackgroundImage(this.files)">
+                        <img src="" alt="CustomBackgroundImage" style="display:none" id="imgCustomBackgroundImage">
+                    </p>
+                </div>
+                <div>
                     <p>Ruler color:
                         <input class="SSVEPLayoutWatchList" optionType="displayOption" type="color" name="rulerColor"
                             id="inputRulerColor" value="#999999">
@@ -67,6 +74,14 @@
                     <p>Patch color:
                         <input class="SSVEPLayoutWatchList" optionType="displayOption" type="color" name="patchColor"
                             id="inputPatchColor" value="#ffffff">
+                    </p>
+                </div>
+                <div>
+                    <p>Patch shape:
+                        <select class="SSVEPLayoutWatchList" name="patchShape" id="selectPatchShape">
+                            <option value="rectangle">Rectangle</option>
+                            <option value="ellipse">Ellipse</option>
+                        </select>
                     </p>
                 </div>
             </div>
@@ -255,11 +270,17 @@
         </div>
 
     </div>
+
     <div>
         <div>
             <h2>Time series</h2>
             <iframe class="fullWidth" height="600px" name="timeSeriesIframe"></iframe>
         </div>
+    </div>
+
+    <div>
+        <h2>Experiment Events</h2>
+        <div id="divExperimentEvents" class="flex"></div>
     </div>
 
     <script src="static/js/commons.js"></script>

@@ -2,6 +2,8 @@ let inputSSVEPLayoutWatchList,
     layoutOptions,
     designTextDom = document.getElementById('textareaDesignText'),
     clonedDesignTextDom = document.getElementById('clonedTextareaDesignText'),
+    customBackgroundImageDom = document.getElementById('imgCustomBackgroundImage'),
+    customBackgroundImage,
     canvas = document.getElementById('canvasSSVEPLayout'),
     ctx = canvas.getContext('2d');
 
@@ -164,6 +166,13 @@ function redrawCanvas() {
             ctx.fillStyle = layoutOptions.inputScreenColor
             ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
+
+        // Draw the custom background
+        if (customBackgroundImage) {
+            ctx.drawImage(customBackgroundImage,
+                0, 0, customBackgroundImage.width, customBackgroundImage.height,
+                0, 0, canvas.width, canvas.height)
+        }
     }
 
     // Draw overlays
@@ -214,7 +223,13 @@ function redrawCanvas() {
             ctx.ellipse(x, y, 5, 5, 0, 0, Math.PI * 2)
             ctx.fill()
 
-            ctx.strokeRect(x - w / 2, y - h / 2, w, h)
+            if (layoutOptions.selectPatchShape === 'rectangle') {
+                ctx.strokeRect(x - w / 2, y - h / 2, w, h)
+            } else if (layoutOptions.selectPatchShape === 'ellipse') {
+                ctx.beginPath()
+                ctx.ellipse(x, y, w / 2, h / 2, 0, 0, Math.PI * 2)
+                ctx.stroke()
+            }
             ctx.font = '' + parseInt(Math.min(w / 4, h / 2)) + "px Arial";
             ctx.fillText(pid, x, y);
 
@@ -244,11 +259,47 @@ inputSSVEPLayoutWatchList.forEach(id => {
     }
 })
 
+function handleBackgroundImage(files) {
+    if (files[0]) {
+        let src = URL.createObjectURL(files[0]);
+        customBackgroundImageDom.src = src
+
+        customBackgroundImage = new Image();
+
+        customBackgroundImage.onload = () => {
+            redrawCanvas()
+        }
+
+        customBackgroundImage.src = src
+    }
+}
+
+function getBackgroundImageDataUrl() {
+    let img, _canvas, ctx;
+
+    img = customBackgroundImage
+
+    if (!img) {
+        return ''
+    }
+
+    _canvas = document.createElement('canvas')
+    _canvas.width = img.width
+    _canvas.height = img.height
+    ctx = _canvas.getContext('2d');
+
+    ctx.drawImage(img, 0, 0)
+
+    return _canvas.toDataURL()
+
+}
+
 // Handle input on #designText
 designTextDom.oninput = () => {
     redrawCanvas()
     clonedDesignTextDom.value = designTextDom.value
 }
+
 
 generateDesign()
 redrawCanvas()
