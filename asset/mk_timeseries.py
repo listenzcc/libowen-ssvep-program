@@ -42,7 +42,7 @@ def generate_time_series(chs: int = 20):
     df = pd.DataFrame()
     for ch in range(chs):
         name = f'p-{ch}'
-        octaves = random.randint(100, 200)
+        octaves = random.randint(20, 50)
         noise = perlin_noise.PerlinNoise(octaves=octaves, seed=time.time())
         ts = np.array([noise(i/n) for i, times in enumerate(times)])*0.5 + 0.5
         ts -= np.min(ts)

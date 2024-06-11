@@ -234,7 +234,8 @@
 
                     <textarea name="designText" style="display:none" id="clonedTextareaDesignText" cols="40"
                         rows="20"></textarea>
-                    <input type="submit" value="Checkout Time Series">
+                    <input type="submit" value="Checkout Time Series"
+                        onclick="document.getElementById('divTimeSeries').style.display='block'">
 
                 </form>
             </div>
@@ -272,7 +273,7 @@
     </div>
 
     <div>
-        <div>
+        <div id="divTimeSeries" style="display:none">
             <h2>Time series</h2>
             <iframe class="fullWidth" height="600px" name="timeSeriesIframe"></iframe>
         </div>

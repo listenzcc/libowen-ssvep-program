@@ -5,6 +5,7 @@ div {
 div.controller {
     background-color: darkgray;
     min-height: 50px;
+    width: 300px;
     padding: 5px;
 }
 
@@ -16,6 +17,7 @@ div.flex {
     display: flex;
     justify-content: space-between;
     place-content: space-evenly;
+    flex-flow: wrap;
 }
 
 .invisible {

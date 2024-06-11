@@ -100,11 +100,18 @@ class MyWebsocketServer(object):
 
             if recovered.get('task_name') == 'checkoutDisplayStatus':
                 msg = dict(
-                    tasksInBuffer=len(self.task_buffer),
-                    passed=self.passed,
-                    total=self.total_length if hasattr(
-                        self, 'total_length') else 'N.A.',
+                    # Overall tasks
                     currentTask=self.current_task.name,
+                    tasksInWait=len(self.task_buffer),
+
+                    # Time of the current task
+                    passed=self.passed,
+                    totalLength=self.total_length if hasattr(
+                        self, 'total_length') else 'N.A.',
+                    remain=self.total_length - self.passed if hasattr(
+                        self, 'total_length') else 'N.A.',
+
+                    # The event buffer of the latest task
                     eventBuffer='\n'.join(
                         [f'{e}' for e in self.fifo_event_buffer.pop(0)]) if self.fifo_event_buffer else ''
                 )
@@ -142,7 +149,8 @@ class MainWindow(MyWebsocketServer):
     # Put the OSD user profile on the middle left
     osd_user_profile_text = 'Empty user profile'
     osd_user_profile = visual.TextStim(
-        win=win, text=osd_user_profile_text, pos=[-resolution_x/2+20, 0], anchorHoriz='left'
+        win=win, text=osd_user_profile_text, pos=[-resolution_x/2+20, 0],
+        anchorHoriz='left', alignText='left'
     )
 
     # Task buffer
@@ -413,8 +421,13 @@ class MainWindow(MyWebsocketServer):
         passed = self._update_timer()
         if key_pressed := kb.getKeys():
             name = key_pressed[0].name
+
+            if name == 'escape':
+                logger.debug('Stopping display since <escape> is pressed')
+                self.safe_stop()
+
             self.event_buffer.append(('keyPress', name, passed))
-            logger.debug(f'Key pressed", {key_pressed}')
+            logger.debug(f'Key pressed", {name}')
         return passed
 
     def _update_timer(self):

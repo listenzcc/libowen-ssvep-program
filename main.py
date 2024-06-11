@@ -131,10 +131,10 @@ def _go():
     df_ts, _ = tsm.merge_with_txt(txt, body_length)
     df_layout = txt2df(txt)
 
-    print(df_layout)
-    print(df_ts)
-    print(cue, head_length, body_length, tail_length, repeats)
-    print(resolution_x, resolution_y)
+    # print(df_layout)
+    # print(df_ts)
+    # print(cue, head_length, body_length, tail_length, repeats)
+    # print(resolution_x, resolution_y)
 
     kwargs = dict(
         task_name='SSVEP',
@@ -188,7 +188,8 @@ def checkout_display_status():
             task_name='checkoutDisplayStatus',
         )))
         msg = pickle.loads(got)
-        print(msg)
+        logger.debug(
+            f'Checkout display status: {list(msg)} ({len(got)} bytes)')
         return msg
     except Exception as error:
         import traceback
@@ -199,7 +200,7 @@ def checkout_display_status():
 # %% ---- 2024-06-03 ------------------------
 # Play ground
 if __name__ == "__main__":
-    app.run(port=23333, debug=True)
+    app.run(host='0.0.0.0', port=23333, debug=True)
 
 
 # %% ---- 2024-06-03 ------------------------
