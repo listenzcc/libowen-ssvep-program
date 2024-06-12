@@ -283,12 +283,14 @@ function getBackgroundImageDataUrl() {
         return ''
     }
 
+    // Resize the canvas to the monitor size
+    // It largely decrease the network load for the image translating
     _canvas = document.createElement('canvas')
-    _canvas.width = img.width
-    _canvas.height = img.height
+    _canvas.width = layoutOptions.inputMonitorResolutionX
+    _canvas.height = layoutOptions.inputMonitorResolutionY
     ctx = _canvas.getContext('2d');
 
-    ctx.drawImage(img, 0, 0)
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, _canvas.width, _canvas.height)
 
     return _canvas.toDataURL()
 

@@ -151,7 +151,7 @@ def _go():
         background_image_data_url=background_image_data_url,
         patch_shape=patch_shape,
     )
-    print(kwargs)
+    # print(kwargs)
 
     try:
         mwc.send(pickle.dumps(dict(prompt='Hello')))
