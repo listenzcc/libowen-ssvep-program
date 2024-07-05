@@ -1,3 +1,6 @@
+doc/private
+
 asset/design
+
 log
 __pycache__
