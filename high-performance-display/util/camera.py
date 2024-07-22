@@ -69,7 +69,6 @@ class CameraReady(object):
                 success = False
 
             if success:
-                # print(m.shape)
                 patch = Image.fromarray(
                     cv2.cvtColor(m[:, ::-1], cv2.COLOR_BGR2RGB))
             else:

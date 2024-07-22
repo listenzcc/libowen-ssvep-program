@@ -86,9 +86,6 @@ window.resize(pixmap.width(), pixmap.height())
 window.show()
 
 
-rt.reset()
-
-
 def about_to_quit():
     rt.running = False
     print(f'About to quit')
@@ -104,6 +101,7 @@ app.aboutToQuit.connect(about_to_quit)
 
 def focus_changed(e):
     do.flag_focus = e is not None
+    print(e, do.flag_focus)
 
 
 app.focusWindowChanged.connect(focus_changed)
@@ -130,23 +128,31 @@ window.keyPressEvent = key_pressed
 
 
 def animating_loop():
+    rt.reset()
+
     while rt.running:
-        passed = rt.get()
+        # Update the timer to the next frame
         rt.step()
 
-        patch = cr.patch
+        # Get the current time
+        passed = rt.get()
 
+        # Draw patches in the m x n grid
+        # it follows the variable of passed
         for x in range(0, width, 100):
             for y in range(0, height, 100):
                 c = int((opensimplex.noise3(x=x, y=y, z=passed)+1) * 0.5 * 256)
                 draw.rectangle((x, y, x+50, y+50), fill=(c, c, c, c))
 
+        # Blink on the right top corner if not focused
         if not do.flag_focus:
             c = tuple(np.random.randint(0, 256, 3))
             draw.rectangle((width-50, 0, width, 50), fill=c)
 
-        img.paste(patch)
+        # Paste the Camera patch to the left top corner
+        img.paste(cr.patch)
 
+        # Convert the img into pixmap and display
         pixmap = QPixmap.fromImage(ImageQt(img))
         label.setPixmap(pixmap)
         time.sleep(0.001)

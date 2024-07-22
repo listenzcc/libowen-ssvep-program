@@ -30,7 +30,7 @@ class RunningTimer(object):
     passed = 0  # seconds since reset
     auto_report_step = 1  # seconds between each auto report
     auto_report_passed = 0  # seconds on the next auto report
-    running = True  # whether the timer is running
+    running = False  # whether the timer is running
 
     def __init__(self):
         pass
