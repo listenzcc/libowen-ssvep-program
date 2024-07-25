@@ -65,12 +65,17 @@ window.setWindowFlags(
 # Only hide window frame
 # window.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
+screen = app.primaryScreen()
+width = screen.size().width() // 2
+height = screen.size().height()
+
+window.move(width, 0)
+
 label = QLabel(window)
 
-width = 1920
-height = 1080
-
 img = Image.open('image.jpg').resize((width, height)).convert('RGBA')
+img = Image.fromarray(
+    np.zeros((width, height, 4), dtype=np.uint8)).convert('RGBA')
 draw = ImageDraw.Draw(img)
 pixmap = QPixmap.fromImage(ImageQt(img))
 # pixmap = QPixmap('po.png')
@@ -139,10 +144,15 @@ def animating_loop():
 
         # Draw patches in the m x n grid
         # it follows the variable of passed
-        for x in range(0, width, 100):
-            for y in range(0, height, 100):
-                c = int((opensimplex.noise3(x=x, y=y, z=passed)+1) * 0.5 * 256)
-                draw.rectangle((x, y, x+50, y+50), fill=(c, c, c, c))
+        patch_size = 200
+        patch_gap = 250
+        speed_factor = 10
+        for x in range(0, width, patch_gap):
+            for y in range(0, height, patch_gap):
+                c = int(
+                    (opensimplex.noise3(x=x, y=y, z=passed * speed_factor)+1) * 0.5 * 256)
+                draw.rectangle(
+                    (x, y, x+patch_size, y+patch_size), fill=(c, c, c, c))
 
         # Blink on the right top corner if not focused
         if not do.flag_focus:

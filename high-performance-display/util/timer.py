@@ -36,6 +36,13 @@ class RunningTimer(object):
         pass
 
     def step(self):
+        '''
+        Update the timer to the next frame.
+
+        Returns:
+            - frames: How many frames are passed.
+            - frame_rate: The frame rate of all the frames.
+        '''
         self.frames += 1
         passed = self.get()
         frame_rate = self.frames / passed if passed > 0 else 0
@@ -48,9 +55,18 @@ class RunningTimer(object):
         return self.frames, frame_rate
 
     def get(self):
+        '''
+        Get the passed time in seconds.
+
+        Returns:
+            - seconds: The seconds passed.
+        '''
         return time.time() - self.tic
 
     def reset(self):
+        '''
+        Reset the timer and start the timer *IMMEDIATELY*.
+        '''
         self.tic = time.time()
         self.frames = 0  # How many frames
         self.passed = 0  # seconds since reset
