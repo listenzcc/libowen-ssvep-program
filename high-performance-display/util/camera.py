@@ -29,38 +29,57 @@ from . import logger
 # %% ---- 2024-06-13 ------------------------
 # Function and class
 class CameraReady(object):
-    cap = None
+    # Predefined options
+    camera_id = 0
     width = 640
     height = 480
     mode = 'RGBA'
+
+    # Running time variables
+    cap = None
     patch = None
-    camera_id = 0
     running = True
 
-    def __init__(self, camera_id: int = 0):
+    def __init__(self, **kwargs):
+        # Setup known options with arguments
+        for k, v in kwargs.items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+                logger.debug(f'Set {k} to {v}')
+            else:
+                logger.warning(f'Invalid argument: {k}, {v}')
+
+        # Initialize the patch
         self.patch = self.empty_patch()
-        self.camera_id = camera_id
+        pass
 
     def empty_patch(self) -> Image:
+        '''Make the empty patch with all-zero values'''
         patch = Image.fromarray(np.random.randint(
             0, 256, (self.height, self.width, 3)), mode='RGB')
         return patch
 
     def start_capture_threads(self):
+        '''Start workload threads'''
         Thread(target=self._link_capture, daemon=True).start()
         Thread(target=self._keep_capturing, daemon=True).start()
 
     def stop(self):
+        '''Stop the capture thread and release the resource'''
         if self.cap:
             self.cap.release()
         logger.info(f'Released camera: {self.cap}')
 
     def _link_capture(self):
-        # It costs seconds to startup the camera
+        '''
+        Links to the camera's capture service.
+        It costs seconds to startup the camera.
+        '''
         self.cap = cv2.VideoCapture(self.camera_id)
         logger.info(f'Linked with camera: {self.cap}')
 
     def _keep_capturing(self):
+        '''Keep capturing the camera'''
         logger.info('Start capturing')
         while self.running:
             try:
@@ -69,8 +88,8 @@ class CameraReady(object):
                 success = False
 
             if success:
-                patch = Image.fromarray(
-                    cv2.cvtColor(m[:, ::-1], cv2.COLOR_BGR2RGB))
+                patch = Image.fromarray(cv2.cvtColor(
+                    m[:, ::-1], cv2.COLOR_BGR2RGB)).resize((self.width, self.height))
             else:
                 patch = self.empty_patch()
 

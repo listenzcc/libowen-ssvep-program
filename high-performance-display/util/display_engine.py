@@ -18,8 +18,12 @@ Functions:
 
 # %% ---- 2024-07-24 ------------------------
 # Requirements and constants
+import sys
+import time
+import opensimplex
 import numpy as np
 
+from threading import Thread
 from PIL import Image, ImageDraw
 from PIL.ImageQt import ImageQt
 
@@ -27,14 +31,13 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel
 
-from loguru import logger
-
+from . import logger
 from .timer import RunningTimer
 
 
 # %% ---- 2024-07-24 ------------------------
 # Function and class
-_app = QApplication()
+_app = QApplication(sys.argv)
 
 
 class DisplayEngine(object):
@@ -48,7 +51,7 @@ class DisplayEngine(object):
     # Components
     window = QMainWindow()
     pixmap_container = QLabel(window)
-    rt = RunningTimer()
+    rt = RunningTimer('BackendTimer')
 
     # Parameters in waiting
     width: int = None
@@ -149,7 +152,7 @@ class DisplayEngine(object):
         img -> pixmap -> pixmap_container
 
         Args:
-            img: Image object, default is None.
+            - img: Image object, default is None.
         '''
 
         # Use self.img if nothing is provided
@@ -169,29 +172,69 @@ class DisplayEngine(object):
         Remake the self.pixmap with the input img.
 
         Args:
-            img: Image object.
+            - img: Image object.
         '''
         self.pixmap = QPixmap.fromImage(ImageQt(img))
         return
 
     def start(self):
-        # TODO: Start running_loop in a thread.
-        pass
+        ''' Start the main_loop '''
+        Thread(target=self.main_loop, daemon=True).start()
+        return
 
     def stop(self):
-        '''Stop the running main loop'''
+        ''' Stop the running main loop '''
         self.rt.running = False
 
     def main_loop(self):
-        '''
-        Main loop for SSVEP display.
-        '''
+        ''' Main loop for SSVEP display. '''
         self.rt.reset()
 
+        logger.debug('Starting')
         while self.rt.running:
             # Update the timer to the next frame
             self.rt.step()
+
+            # Get the current time
+            passed = self.rt.get()
+
+            # Draw the patches in the grid
+            # The patch_gap should be larger than patch_size
+            patch_size = 200
+            patch_gap = 250
+            # The flipping rate is faster when the speed_factor is faster
+            speed_factor = 10
+            z = passed * speed_factor
+            # The two-loops generate x, y coordinates for the grid patches
+            for x in range(0, self.width, patch_gap):
+                for y in range(0, self.height, patch_gap):
+                    # Generate continue noise,
+                    # and linearly convert from (-1, 1) to (0, 1)
+                    f = (opensimplex.noise3(x=x, y=y, z=z)+1) * 0.5
+                    # Convert to [0, 255]
+                    c = int(f * 256)
+                    self.img_drawer.rectangle(
+                        (x, y, x+patch_size, y+patch_size), fill=(c, c, c, c))
+
+            # Blink on the right top corner in 50x50 pixels size if not focused
+            if not self.flag_has_focus:
+                c = tuple(np.random.randint(0, 256, 3))
+                self.img_drawer.rectangle(
+                    (self.width-50, 0, self.width, 50), fill=c)
+
+            # Paint
+            self._on_paint_subsystem()
+            # self.repaint()
+
+            # Continue after sleep
+            time.sleep(0.001)
             pass
+        logger.debug('Stopped')
+        return
+
+    def _on_paint_subsystem(self):
+        '''Subsystem requires rewrite'''
+        return
 
 
 # %% ---- 2024-07-24 ------------------------

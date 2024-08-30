@@ -1,3 +1,14 @@
 {
-  "cSpell.words": ["opensimplex", "perlin", "psychopy", "ssvep", "Stim"]
+  "cSpell.words": [
+    "dtype",
+    "Frameless",
+    "fromarray",
+    "loguru",
+    "opensimplex",
+    "perlin",
+    "Pixmap",
+    "psychopy",
+    "ssvep",
+    "Stim"
+  ]
 }

@@ -31,8 +31,11 @@ class RunningTimer(object):
     auto_report_step = 1  # seconds between each auto report
     auto_report_passed = 0  # seconds on the next auto report
     running = False  # whether the timer is running
+    name = 'zccTimer'
 
-    def __init__(self):
+    def __init__(self, name=None):
+        if name:
+            self.name = name
         pass
 
     def step(self):
@@ -50,7 +53,7 @@ class RunningTimer(object):
         if passed > self.auto_report_passed:
             self.auto_report_passed += self.auto_report_step
             logger.debug(
-                f'Frame rate: {frame_rate:0.2f}, Passed: {passed:0.2f} seconds')
+                f'{self.name}: Frame rate: {frame_rate:0.2f}, Passed: {passed:0.2f} seconds')
 
         return self.frames, frame_rate
 

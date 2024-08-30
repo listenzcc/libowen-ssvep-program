@@ -74,8 +74,8 @@ window.move(width, 0)
 label = QLabel(window)
 
 img = Image.open('image.jpg').resize((width, height)).convert('RGBA')
-img = Image.fromarray(
-    np.zeros((width, height, 4), dtype=np.uint8)).convert('RGBA')
+# img = Image.fromarray(
+#     np.zeros((width, height, 4), dtype=np.uint8)).convert('RGBA')
 draw = ImageDraw.Draw(img)
 pixmap = QPixmap.fromImage(ImageQt(img))
 # pixmap = QPixmap('po.png')
